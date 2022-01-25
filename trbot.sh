@@ -49,7 +49,7 @@ coolk=0
 function logger()
 {
 local date1=`date '+ %Y-%m-%d %H:%M:%S'`
-echo $date1" trbot: "$1 #>> $log
+echo $date1" trbot: "$1 >> $log
 }
 
 mkdir -p $ftb
@@ -329,7 +329,7 @@ for (( i=1;i<=$mi_col;i++)); do
 #			#logger "processed"
 #		fi
 #	done
-
+	logger "parce ffufuf last_id="$last_id", mi="$mi
 	if [ "$last_id" -gt "$mi" ]; then
 		ffufuf=1
 	fi
