@@ -292,6 +292,7 @@ logger "input exit"
 
 lastidrass ()  				
 {
+last_id=$(sed -n 1"p" $ftb"lastid.txt" | tr -d '\r')
 if [ "$last_id" -le "$mi" ]; then
 	last_id=$((mi+1))
 	echo $last_id > $ftb"lastid.txt"
