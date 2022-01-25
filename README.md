@@ -15,3 +15,5 @@ rm -f /usr/share/trbot2/rtb_pid.txt && su mastmetric -c '/usr/share/trbot2/trbot
   
 dependencies: wget git tar curl bc jq perl  
   
+  docker: docker push evonic/supzambot  
+  
