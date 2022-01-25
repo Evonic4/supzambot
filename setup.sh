@@ -4,7 +4,7 @@ f1=/usr/share/trbot2/
 cd $f1
 useradd -d /dev/null -G adm -p 12345 -s /bin/bash mastmetric 
 chown -R mastmetric:mastmetric /usr/share/trbot2/
-cp -r -f ./logrotate /etc/logrotate.d/ && cd /etc/logrotate.d/ && chown root:root * && chmod 640 *
+cp -r -f ./logrotate/trbot /etc/logrotate.d/ && cd /etc/logrotate.d/ && chown root:root * && chmod 640 *
 mkdir -p /var/log/trbot/ && chown -R mastmetric:mastmetric /var/log/trbot/
 
 cd $f1
