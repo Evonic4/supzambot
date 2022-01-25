@@ -299,6 +299,7 @@ if [ "$last_id" -le "$mi" ]; then
 	last_id=$((mi+1))
 	echo $last_id > $ftb"lastid.txt"
 	logger "new last_id="$last_id
+	echo $last_id > $mass_mesid_file
 fi
 
 }
@@ -472,6 +473,7 @@ echo $PID > $fPID
 
 logger " "
 logger "start bot, loglevel="$loglevel", chat_id1="$chat_id1", chat_id_tech="$chat_id_tech
+lastidrass;
 
 otv=$home_trbot"start.txt"; send;
 
