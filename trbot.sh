@@ -299,7 +299,6 @@ if [ "$last_id" -le "$mi" ]; then
 	last_id=$((mi+1))
 	echo $last_id > $ftb"lastid.txt"
 	logger "new last_id="$last_id
-	echo $last_id > $mass_mesid_file
 fi
 
 }
@@ -312,9 +311,9 @@ date1=`date '+ %d.%m.%Y %H:%M:%S'`
 mi_col=$(cat $ftb"in.txt" | grep -c update_id | tr -d '\r')
 logger "parce col mi_col ="$mi_col
 
-if [ "$mi_col" -eq "0" ] && [ "$ffufuf1" -eq "0" ]; then
-	echo "" > $mass_mesid_file
-fi
+#if [ "$mi_col" -eq "0" ] && [ "$ffufuf1" -eq "0" ]; then
+#	echo "" > $mass_mesid_file
+#fi
 
 
 for (( i=1;i<=$mi_col;i++)); do
@@ -323,14 +322,18 @@ for (( i=1;i<=$mi_col;i++)); do
 	logger "parce update_id="$mi
 	
 	ffufuf=0
-	for x in `cat $mass_mesid_file|grep -v \#|tr -d '\r'`
-	do
-		if [ "$x" -eq "$mi" ]; then
-			ffufuf=1
-			#logger "processed"
-		fi
-	done
-	
+#	for x in `cat $mass_mesid_file|grep -v \#|tr -d '\r'`
+#	do
+#		if [ "$x" -eq "$mi" ]; then
+#			ffufuf=1
+#			#logger "processed"
+#		fi
+#	done
+
+	if [ "$last_id" -gt "$mi" ]; then
+		ffufuf=1
+	fi
+
 	
 	if [ "$ffufuf" -eq "0" ]; then
 		chat_id=$(cat $ftb"in.txt" | jq ".result[$i1].message.chat.id" | sed 's/-/z/g' | tr -d '\r')
@@ -343,13 +346,12 @@ for (( i=1;i<=$mi_col;i++)); do
 			#echo $text > $home_trbot"t.txt"
 			roborob;
 			
-			#lastidrass;
 			logger "parce ok"
-			echo $mi >> $mass_mesid_file
+			#echo $mi > $mass_mesid_file
 		else
-			#lastidrass;
 			logger "parce dont! chat_id="$chat_id" NOT OK"
 		fi
+		lastidrass;
 	fi
 	
 done
