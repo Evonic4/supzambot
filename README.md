@@ -12,3 +12,6 @@ cd /usr/share && git clone https://github.com/Evonic4/supzambot.git && mv ./supz
 4. start:  
 rm -f /usr/share/trbot2/rtb_pid.txt && su mastmetric -c '/usr/share/trbot2/trbot.sh' -s /bin/bash &  
   
+  
+dependencies: wget git tar curl bc jq perl  
+  
