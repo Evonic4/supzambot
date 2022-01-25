@@ -1,5 +1,5 @@
 #!/bin/bash
-#@Mixvel_Support_Akela_Bot
+#supzambot
 
 ftb=/usr/share/trbot2/
 fm="$ftb"mail.txt
@@ -15,6 +15,8 @@ logger "init2 start"
 #load conf
 token=$(sed -n 1"p" $ftb"settings.conf" | tr -d '\r')
 log=$(sed -n 2"p" $ftb"settings.conf" | tr -d '\r')
+lid=$(sed -n 3"p" $ftb"settings.conf" | tr -d '\r')
+echo $lid > $ftb"lastid.txt"
 fPID=$(sed -n 4"p" $ftb"settings.conf" | tr -d '\r')
 f_send=$(sed -n 5"p" $ftb"settings.conf" | tr -d '\r')
 sec=$(sed -n 6"p" $ftb"settings.conf" | tr -d '\r')
@@ -35,6 +37,8 @@ n_mode=0
 nade=0
 progsz=$(sed -n 16"p" $ftb"settings.conf" | tr -d '\r')
 ztich=$(sed -n 17"p" $ftb"settings.conf" | tr -d '\r')
+
+last_id=$(sed -n 1"p" $ftb"lastid.txt" | tr -d '\r')
 logger "init2 stop"
 }
 
@@ -109,7 +113,7 @@ send;
 roborob () 
 {
 date1=`date '+ %d.%m.%Y %H:%M:%S'`
-logger "roborob text="$text
+#logger "roborob text="$text
 otv=""
 
 if [ "$text" = "/start" ] || [ "$text" = "/?" ] || [ "$text" = "/help" ] || [ "$text" = "/h" ]; then
@@ -169,7 +173,7 @@ fi
 }
 
 
-send1 ()  		#функция1 отправки ответа в чат
+send1 ()
 {
 
 logger "send1 start"
@@ -185,13 +189,13 @@ pauseloop;
 if [ -f $ftb"out.txt" ]; then
 	logger "send1 superlog1" && cat $file >> $log
 	
-	if [ "$(cat $ftb"out.txt" | grep ":true,")" ]; then		#ответ отправлен
+	if [ "$(cat $ftb"out.txt" | grep ":true,")" ]; then
 		logger "send1 OK"
 	else
 		logger "send1 file+, timeout.."
 		sleep 2
 	fi
-else														#ответ не отправлен
+else
 	logger "send1 FAIL"
 	if [ -f $ftb"cu2_pid.txt" ]; then
 		logger "send1 kill cucu2"
@@ -206,7 +210,7 @@ logger "send1 exit"
 
 }
 
-send ()  		#функция отправки ответа в чат
+send ()
 {
 logger "send start"
 rm -f $ftb"send.txt"
@@ -263,10 +267,10 @@ pauseloop;
 if [ -f $ftb"in.txt" ]; then
 	[ "$loglevel" -gt "1" ] && logger "input superlog" && cat $home_trbot"in.txt" >> $log
 
-	if [ "$(cat $ftb"in.txt" | grep ":true,")" ]; then		#получено
+	if [ "$(cat $ftb"in.txt" | grep ":true,")" ]; then
 		logger "input OK"
 	else
-		logger "input file+, timeout.." #error_code
+		logger "input file+, timeout.."
 		ffufuf1=1
 		sleep 2
 	fi
@@ -286,10 +290,10 @@ logger "input exit"
 }
 
 
-lastidrass () 
+lastidrass ()  				
 {
-if [ "$last_id" -lt "$mi" ]; then
-	last_id=$mi
+if [ "$last_id" -le "$mi" ]; then
+	last_id=$((mi+1))
 	echo $last_id > $ftb"lastid.txt"
 	logger "new last_id="$last_id
 fi
@@ -312,7 +316,7 @@ fi
 for (( i=1;i<=$mi_col;i++)); do
 	i1=$((i-1))
 	mi=$(cat $ftb"in.txt" | jq ".result[$i1].update_id" | tr -d '\r')
-	#logger "update_id="$mi
+	logger "parce update_id="$mi
 	
 	ffufuf=0
 	for x in `cat $mass_mesid_file|grep -v \#|tr -d '\r'`
@@ -331,8 +335,8 @@ for (( i=1;i<=$mi_col;i++)); do
 			logger "parse chat_id="$chat_id" -> OK"
 			chat_id1=$chat_id
 			text=$(cat $ftb"in.txt" | jq ".result[$i1].message.text" | sed 's/\"/ /g' | sed 's/^[ \t]*//;s/[ \t]*$//' | tr -d '\r')
-			logger $text
-			echo $text > $home_trbot"t.txt"
+			logger "parse text="$text
+			#echo $text > $home_trbot"t.txt"
 			roborob;
 			
 			#lastidrass;
@@ -345,6 +349,7 @@ for (( i=1;i<=$mi_col;i++)); do
 	fi
 	
 done
+lastidrass;
 }
 
 
@@ -419,8 +424,8 @@ if [ "$str_co2" -gt "0" ]; then
 				curl -s --netrc-file $home_trbot"cr.txt" $urlpoint/api/v1/tickets/search?query=number:$test | jq '.assets.Ticket' | grep title | sed 's/: /TQ4534534/g' | awk -F"TQ4534534" '{print $2}' | sed 's/\"/ /g' | sed 's/\,/ /g' | sed 's/^[ \t]*//;s/[ \t]*$//' > $home_trbot"tmp1.txt"
 				echo "$(cat $home_trbot"tmp1.txt")" >> $home_trbot"zammad.txt"
 				echo "----" >> $home_trbot"zammad.txt"
-				numtick=$(sed -n 1"p" $home_trbot"tick.txt" | tr -d '\r')
-				[ "$test" -gt "numtick" ] && echo $test > $home_trbot"tick.txt"
+				#numtick=$(sed -n 1"p" $home_trbot"tick.txt" | tr -d '\r')
+				#[ "$test" -gt "numtick" ] && echo $test > $home_trbot"tick.txt"
 				logger "parce3 send"; otv=$ftb"zammad.txt"; send;
 			else
 				logger "parce3 n_mode true, "$test" in arh"
@@ -458,7 +463,7 @@ logger "parce3 stop"
 
 
 
-if ! [ -f $fPID ]; then		#----------------------- старт------------------
+if ! [ -f $fPID ]; then		#-----------------------
 PID=$$
 echo $PID > $fPID
 
@@ -499,10 +504,8 @@ if ! [ -f $f_send ]; then		#НЕ файл с оповещением
 	chat_id1=$(sed -n 9"p" $ftb"settings.conf" | tr -d '\r')
 	input;
 	parce;
-else #файл с оповещением
-	#chat_id1=$(sed -n "1p" $frecid | sed 's/z/-/g' | tr -d '\r')
-	
-	chat_id2=$(sed -n 10"p" $ftb"settings.conf" | sed 's/z/-/g' | tr -d '\r')
+else 
+	chat_id=$(sed -n 9"p" $ftb"settings.conf" | sed 's/z/-/g' | tr -d '\r')
 	otv=$f_send
 	logger "OPOVEST! chat_id="$chat_id2", otv="$otv
 	send;
@@ -516,10 +519,10 @@ fi
 done
 
 
-else #----------------------- не старт------------------
+else #-----------------------
 	logger "pid up exit"
 
-fi #----------------------- конец старт------------------
+fi #-----------------------
 
 
 rm -f $fPID
