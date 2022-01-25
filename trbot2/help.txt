@@ -1,0 +1,6 @@
+/ss - Server status
+/t 12345 - Ticket status
+/j - Tickets in support
+/nm - night mode
+notifications about new tickets only
+(def 00:00 - 09:00, on, off)
