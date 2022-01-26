@@ -51,7 +51,7 @@ starten=1
 function logger()
 {
 local date1=`date '+ %Y-%m-%d %H:%M:%S'`
-echo $date1" trbot: "$1 >> $log
+echo $date1" trbot: "$1 #>> $log
 }
 
 mkdir -p $ftb
@@ -243,7 +243,6 @@ logger "send exit"
 pauseloop () 
 {
 sec1=0
-rm -f $file
 again0="yes"
 while [ "$again0" = "yes" ]
 do
@@ -273,7 +272,6 @@ if [ -f $ftb"in.txt" ]; then
 		logger "input OK"
 	else
 		logger "input file+, timeout.."
-		ffufuf1=1
 		sleep 2
 	fi
 else	#подвис
@@ -281,10 +279,9 @@ else	#подвис
 	if [ -f $ftb"cu1_pid.txt" ]; then
 		logger "input kill cucu1"
 		cu_pid=$(sed -n 1"p" $ftb"cu1_pid.txt" | tr -d '\r')
-		killall cucu1.sh
+		#killall cucu1.sh
 		kill -9 $cu_pid
 		rm -f $ftb"cu1_pid.txt"
-		ffufuf1=1
 	fi
 fi
 
@@ -323,9 +320,8 @@ for (( i=1;i<=$mi_col;i++)); do
 	mi=$(cat $ftb"in.txt" | jq ".result[$i1].message.message_id" | tr -d '\r')
 	logger "parce mi="$mi
 
-	#if ! [ -z "$mi" ]; then 
-	#	mi=0
-	#fi
+	[ -z "$mi" ] && mi=0
+	
 	logger "parce ffufuf mess_id="$mess_id", mi="$mi
 	if [ "$mess_id" -ge "$mi" ] || [ "$mi" -eq "0" ]; then
 		ffufuf=1
@@ -479,7 +475,6 @@ otv=$home_trbot"start.txt"; send;
 while true
 do
 sleep $sec4
-ffufuf1=0
 
 if [ "$tmode" -gt "0" ]; then
 	if [ "$nade" -eq "0" ]; then
