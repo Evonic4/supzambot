@@ -38,6 +38,9 @@ nade=0
 progsz=$(sed -n 16"p" $ftb"settings.conf" | tr -d '\r')
 ztich=$(sed -n 17"p" $ftb"settings.conf" | tr -d '\r')
 
+mdt_start=$(sed -n 18"p" $ftb"settings.conf" |sed 's/\://g'|sed 's/\-//g'|sed 's/ //g'| tr -d '\r')
+mdt_end=$(sed -n 19"p" $ftb"settings.conf" |sed 's/\://g'|sed 's/\-//g'|sed 's/ //g' | tr -d '\r')
+
 last_id=$(sed -n 1"p" $ftb"lastid.txt" | tr -d '\r')
 logger "init2 stop"
 }
@@ -45,6 +48,7 @@ logger "init2 stop"
 Init2;
 ibc=$progsz
 coolk=0
+starten=1
 
 function logger()
 {
@@ -147,7 +151,7 @@ logger "nmst="$nmst
 
 if [ "$nmst" = "off" ]; then
 	nade=2
-	tmode=0
+	n_mode=0
 	echo "night mode off" > $ftb"nade.txt"
 	otv=$ftb"nade.txt";	send;
 fi
@@ -292,13 +296,30 @@ logger "input exit"
 
 lastidrass ()  				
 {
-last_id=$(sed -n 1"p" $ftb"lastid.txt" | tr -d '\r')
-logger "lastidrass last_id="$last_id
+logger "lastidrass mess_id="$mess_id
 logger "lastidrass mi="$mi
-if [ "$last_id" -le "$mi" ]; then
+if [ "$mess_id" -le "$mi" ]; then
 	last_id=$((mi+1))
 	echo $last_id > $ftb"lastid.txt"
 	logger "new last_id="$last_id
+fi
+
+}
+
+starten_furer ()  				
+{
+
+if [ "$starten" -eq "1" ]; then
+	logger "starten_furer starten=1"
+	mess_id=$(cat $ftb"in.txt" | jq ".result[].message.message_id" | tail -1 | tr -d '\r')
+	logger "starten_furer mess_id="$mess_id
+	if ! [ -z "$mess_id" ]; then
+		echo $mess_id > $ftb"lastid.txt"
+		else
+		echo "0" > $ftb"lastid.txt"
+	fi
+	logger "starten_furer mess_id="$mess_id
+	starten=0
 fi
 
 }
@@ -308,39 +329,31 @@ parce ()
 {
 logger "parce"
 date1=`date '+ %d.%m.%Y %H:%M:%S'`
-mi_col=$(cat $ftb"in.txt" | grep -c update_id | tr -d '\r')
+mi_col=$(cat $ftb"in.txt" | grep -c message_id | tr -d '\r')
 logger "parce col mi_col ="$mi_col
-
-#if [ "$mi_col" -eq "0" ] && [ "$ffufuf1" -eq "0" ]; then
-#	echo "" > $mass_mesid_file
-#fi
-
 
 for (( i=1;i<=$mi_col;i++)); do
 	i1=$((i-1))
-	mi=$(cat $ftb"in.txt" | jq ".result[$i1].update_id" | tr -d '\r')
-	logger "parce update_id="$mi
-	
-	ffufuf=0
-#	for x in `cat $mass_mesid_file|grep -v \#|tr -d '\r'`
-#	do
-#		if [ "$x" -eq "$mi" ]; then
-#			ffufuf=1
-#			#logger "processed"
-#		fi
-#	done
-	logger "parce ffufuf last_id="$last_id", mi="$mi
-	if [ "$last_id" -gt "$mi" ]; then
-		ffufuf=1
-	fi
+	mi=$(cat $ftb"in.txt" | jq ".result[$i1].message.message_id" | tr -d '\r')
+	logger "parce mi="$mi
 
+	#if ! [ -z "$mi" ]; then 
+	#	mi=0
+	#fi
+	logger "parce ffufuf mess_id="$mess_id", mi="$mi
+	if [ "$mess_id" -ge "$mi" ] || [ "$mi" -eq "0" ]; then
+		ffufuf=1
+		else
+		ffufuf=0
+	fi
+	logger "parce ffufuf ffufuf="$ffufuf
+	
 	
 	if [ "$ffufuf" -eq "0" ]; then
 		chat_id=$(cat $ftb"in.txt" | jq ".result[$i1].message.chat.id" | sed 's/-/z/g' | tr -d '\r')
 		logger "parce chat_id="$chat_id
-		if [ "$(echo $chat_id1 | grep $chat_id)" ]; then
+		if [ "$(echo $chat_id1|sed 's/-/z/g'| tr -d '\r'| grep $chat_id)" ]; then
 			logger "parse chat_id="$chat_id" -> OK"
-			chat_id1=$chat_id
 			text=$(cat $ftb"in.txt" | jq ".result[$i1].message.text" | sed 's/\"/ /g' | sed 's/^[ \t]*//;s/[ \t]*$//' | tr -d '\r')
 			logger "parse text="$text
 			#echo $text > $home_trbot"t.txt"
@@ -351,11 +364,10 @@ for (( i=1;i<=$mi_col;i++)); do
 		else
 			logger "parce dont! chat_id="$chat_id" NOT OK"
 		fi
-		lastidrass;
 	fi
-	
 done
-lastidrass;
+mess_id=$mi
+
 }
 
 
@@ -475,25 +487,23 @@ echo $PID > $fPID
 
 logger " "
 logger "start bot, loglevel="$loglevel", chat_id1="$chat_id1", chat_id_tech="$chat_id_tech
-lastidrass;
-
+starten_furer;
 otv=$home_trbot"start.txt"; send;
 
-#kkik=0
 
 while true
 do
 sleep $sec4
 ffufuf1=0
 
-
 if [ "$tmode" -gt "0" ]; then
 	if [ "$nade" -eq "0" ]; then
 		date1=`date '+ %H:%M:%S'`
-		echo "date1="$date1
+		logger " "
 		mdt1=$(echo "$date1"|sed 's/\://g'|sed 's/\-//g'|sed 's/ //g')
-		mdt_start="000000"
-		mdt_end="090000"
+		logger "mdt1="$mdt1
+		#mdt_start="000000"
+		#mdt_end="090000"
 		if [ "$mdt1" \> "$mdt_start" ] && [ "$mdt1" \< "$mdt_end" ]; then
 			n_mode=1
 		else
@@ -503,16 +513,17 @@ if [ "$tmode" -gt "0" ]; then
 else
 	n_mode=0
 fi
+logger "tmode="$tmode", nade="$nade", n_mode="$n_mode
 [ "$n_mode" -eq "0" ] && [ -f $home_trbot"n_buf.txt" ] && prelibomb $home_trbot"zammad.txt" $home_trbot"n_buf.txt" $home_trbot"zammad3.txt" && otv=$ftb"zammad.txt" && send && rm -f $home_trbot"n_buf.txt"
 parce3;
 auth_stat;
 
 if ! [ -f $f_send ]; then		#НЕ файл с оповещением
-	chat_id1=$(sed -n 9"p" $ftb"settings.conf" | tr -d '\r')
+	chat_id1=$(sed -n 9"p" $ftb"settings.conf" | sed 's/z/-/g' | tr -d '\r')
 	input;
 	parce;
 else 
-	chat_id=$(sed -n 9"p" $ftb"settings.conf" | sed 's/z/-/g' | tr -d '\r')
+	chat_id1=$(sed -n 9"p" $ftb"settings.conf" | sed 's/z/-/g' | tr -d '\r')
 	otv=$f_send
 	logger "OPOVEST! chat_id="$chat_id2", otv="$otv
 	send;
