@@ -3,7 +3,6 @@
 
 ftb=/usr/share/trbot2/
 fm="$ftb"mail.txt
-mass_mesid_file=$ftb"mmid.txt"
 home_trbot=$ftb
 
 
@@ -41,7 +40,6 @@ ztich=$(sed -n 17"p" $ftb"settings.conf" | tr -d '\r')
 mdt_start=$(sed -n 18"p" $ftb"settings.conf" |sed 's/\://g'|sed 's/\-//g'|sed 's/ //g'| tr -d '\r')
 mdt_end=$(sed -n 19"p" $ftb"settings.conf" |sed 's/\://g'|sed 's/\-//g'|sed 's/ //g' | tr -d '\r')
 
-last_id=$(sed -n 1"p" $ftb"lastid.txt" | tr -d '\r')
 logger "init2 stop"
 }
 
@@ -294,17 +292,6 @@ logger "input exit"
 }
 
 
-lastidrass ()  				
-{
-logger "lastidrass mess_id="$mess_id
-logger "lastidrass mi="$mi
-if [ "$mess_id" -le "$mi" ]; then
-	last_id=$((mi+1))
-	echo $last_id > $ftb"lastid.txt"
-	logger "new last_id="$last_id
-fi
-
-}
 
 starten_furer ()  				
 {
@@ -315,8 +302,6 @@ if [ "$starten" -eq "1" ]; then
 	logger "starten_furer mess_id="$mess_id
 	if ! [ -z "$mess_id" ]; then
 		echo $mess_id > $ftb"lastid.txt"
-		else
-		echo "0" > $ftb"lastid.txt"
 	fi
 	logger "starten_furer mess_id="$mess_id
 	starten=0
@@ -331,6 +316,7 @@ logger "parce"
 date1=`date '+ %d.%m.%Y %H:%M:%S'`
 mi_col=$(cat $ftb"in.txt" | grep -c message_id | tr -d '\r')
 logger "parce col mi_col ="$mi_col
+mess_id=$(sed -n 1"p" $ftb"lastid.txt" | tr -d '\r')
 
 for (( i=1;i<=$mi_col;i++)); do
 	i1=$((i-1))
@@ -360,13 +346,12 @@ for (( i=1;i<=$mi_col;i++)); do
 			roborob;
 			
 			logger "parce ok"
-			#echo $mi > $mass_mesid_file
 		else
 			logger "parce dont! chat_id="$chat_id" NOT OK"
 		fi
 	fi
 done
-mess_id=$mi
+echo $mi > $ftb"lastid.txt"
 
 }
 
