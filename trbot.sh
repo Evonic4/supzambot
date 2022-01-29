@@ -51,7 +51,7 @@ starten=1
 function logger()
 {
 local date1=`date '+ %Y-%m-%d %H:%M:%S'`
-echo $date1" trbot: "$1 #>> $log
+echo $date1" supzambot: "$1 #>> $log
 }
 
 mkdir -p $ftb
