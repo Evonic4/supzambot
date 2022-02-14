@@ -27,18 +27,19 @@ loglevel=$(sed -n 11"p" $ftb"settings.conf" | tr -d '\r')
 
 user1=$(sed -n 12"p" $ftb"settings.conf" | tr -d '\r')
 pass1=$(sed -n 13"p" $ftb"settings.conf" | tr -d '\r')
-urlpoint=$(sed -n 14"p" $ftb"settings.conf" | tr -d '\r')
+urlpoint1=$(sed -n 14"p" $ftb"settings.conf" | tr -d '\r')
+urlpoint2=$(sed -n 15"p" $ftb"settings.conf" | tr -d '\r')
+urlpoint=$urlpoint1$urlpoint2
+echo "machine "$urlpoint2" login "$user1 "password "$pass1 > $home_trbot"cr.txt"
 
-echo "machine support.mixvel.com login "$user1 "password "$pass1 > $home_trbot"cr.txt"
-
-tmode=$(sed -n 15"p" $ftb"settings.conf" | tr -d '\r')
+tmode=$(sed -n 16"p" $ftb"settings.conf" | tr -d '\r')
 n_mode=0
 nade=0
-progsz=$(sed -n 16"p" $ftb"settings.conf" | tr -d '\r')
-ztich=$(sed -n 17"p" $ftb"settings.conf" | tr -d '\r')
+progsz=$(sed -n 17"p" $ftb"settings.conf" | tr -d '\r')
+ztich=$(sed -n 18"p" $ftb"settings.conf" | tr -d '\r')
 
-mdt_start=$(sed -n 18"p" $ftb"settings.conf" |sed 's/\://g'|sed 's/\-//g'|sed 's/ //g'| tr -d '\r')
-mdt_end=$(sed -n 19"p" $ftb"settings.conf" |sed 's/\://g'|sed 's/\-//g'|sed 's/ //g' | tr -d '\r')
+mdt_start=$(sed -n 19"p" $ftb"settings.conf" |sed 's/\://g'|sed 's/\-//g'|sed 's/ //g'| tr -d '\r')
+mdt_end=$(sed -n 20"p" $ftb"settings.conf" |sed 's/\://g'|sed 's/\-//g'|sed 's/ //g' | tr -d '\r')
 
 logger "init2 stop"
 }
@@ -434,7 +435,7 @@ if [ "$str_co2" -gt "0" ]; then
 	done
 	echo "$(cat $home_trbot"int2.txt")" > $home_trbot"int3.txt"
 else
-	k=`curl -I -m 60 --netrc-file $home_trbot"cr.txt" $urlpoint | grep "HTTP" | awk '{print $2}'`
+	k=`curl -s -I -m 60 --netrc-file $home_trbot"cr.txt" $urlpoint | grep "HTTP" | awk '{print $2}'`
 	if [ "$k" -eq "200" ]; then
 		coolk=$((coolk+1))
 		if [ "$coolk" -gt "10" ]; then
