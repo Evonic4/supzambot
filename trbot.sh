@@ -228,9 +228,9 @@ if [ "$dl" -gt "4000" ]; then
 	$ftb"rex.sh" $otv
 	
 	for (( i=1;i<=$sv;i++)); do
-		otv=$fhome"rez"$i".txt"
+		otv=$ftb"rez"$i".txt"
 		send1;
-		rm -f $fhome"rez"$i".txt"
+		rm -f $ftb"rez"$i".txt"
 	done
 	
 else
