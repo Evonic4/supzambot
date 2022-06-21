@@ -228,9 +228,9 @@ if [ "$dl" -gt "4000" ]; then
 	$ftb"rex.sh" $otv
 	
 	for (( i=1;i<=$sv;i++)); do
-		otv=$ftb"rez"$i".txt"
+		otv=$fhome"rez"$i".txt"
 		send1;
-		rm -f $ftb"rez"$i".txt"
+		rm -f $fhome"rez"$i".txt"
 	done
 	
 else
@@ -424,7 +424,7 @@ if [ "$str_co2" -gt "0" ]; then
 				curl -s --netrc-file $home_trbot"cr.txt" $urlpoint/api/v1/tickets/search?query=number:$test | jq '.assets.Ticket' | grep title | sed 's/: /TQ4534534/g' | awk -F"TQ4534534" '{print $2}' | sed 's/\"/ /g' | sed 's/\,/ /g' | sed 's/^[ \t]*//;s/[ \t]*$//' > $home_trbot"tmp1.txt"
 				echo "$(cat $home_trbot"tmp1.txt")" >> $home_trbot"zammad.txt"
 				idid=`curl -s --netrc-file $home_trbot"cr.txt" $urlpoint/api/v1/tickets/search?query=number:$test | jq '.assets.Ticket' | grep "\"id\": " | sed 's/: /TQ4534534/g' | awk -F"TQ4534534" '{print $2}' | sed 's/\"/ /g' | sed 's/\,/ /g' | sed 's/^[ \t]*//;s/[ \t]*$//'`
-				echo "https://support.mixvel.com/#ticket/zoom/91"$idid >> $home_trbot"zammad.txt"
+				echo "https://support.mixvel.com/#ticket/zoom/"$idid >> $home_trbot"zammad.txt"
 				echo "----" >> $home_trbot"zammad.txt"
 				#numtick=$(sed -n 1"p" $home_trbot"tick.txt" | tr -d '\r')
 				#[ "$test" -gt "numtick" ] && echo $test > $home_trbot"tick.txt"
