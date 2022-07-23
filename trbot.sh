@@ -127,9 +127,9 @@ if [ "$text" = "/ss" ] || [ "$text" = "/status" ]; then
 	otv=$ftb"ss.txt"
 	send;
 fi
-if [ "$text" = "/j" ] || [ "$text" = "/job" ]; then
-	jobs_status;
-fi
+#if [ "$text" = "/j" ] || [ "$text" = "/job" ]; then
+#	jobs_status;
+#fi
 if [[ "$text" == /t* ]]; then
 	ticket_status;
 fi
@@ -472,7 +472,7 @@ echo $PID > $fPID
 logger " "
 logger "start bot, loglevel="$loglevel", chat_id1="$chat_id1", chat_id_tech="$chat_id_tech
 starten_furer;
-otv=$home_trbot"start.txt"; send;
+#otv=$home_trbot"start.txt"; send;
 
 
 while true
