@@ -411,6 +411,8 @@ str_co2=$(grep -cv "^#" $home_trbot"int2.txt")
 logger "parce3 str_co2="$str_co2
 
 if [ "$str_co2" -gt "0" ]; then
+	coolk=0
+	echo "ok" > $home_trbot"ss.txt"
 	for (( i=1;i<=$str_co2;i++)); do
 	test=$(sed -n $i"p" $home_trbot"int2.txt" | tr -d '\r')
 	logger "parce3 test="$test
@@ -437,18 +439,21 @@ if [ "$str_co2" -gt "0" ]; then
 	done
 	echo "$(cat $home_trbot"int2.txt")" > $home_trbot"int3.txt"
 else
-	k=`curl -s -I -m 60 --netrc-file $home_trbot"cr.txt" $urlpoint | grep "HTTP" | awk '{print $2}'`
-	if [ "$k" -eq "200" ]; then
-		coolk=$((coolk+1))
-		if [ "$coolk" -gt "10" ]; then
-			rm -f $home_trbot"int3.txt"	
-			touch $home_trbot"int3.txt"
+	#k=`curl -s -I -m 60 --netrc-file $home_trbot"cr.txt" $urlpoint | grep "HTTP" | awk '{print $2}'`
+	#logger "parce3 |||||||||||k="$k
+	#if [ "$k" -eq "200" ]; then
+	logger "parce3 coolk="$coolk"  ---- zammad api not available!!! ----"
+	coolk=$((coolk+1))
+		if [ "$coolk" -gt "44" ]; then
+			#logger "parce3 coolk="$coolk"kill int3.txt"
+			#rm -f $home_trbot"int3.txt"	
+			#touch $home_trbot"int3.txt"
+			echo "Zammad api not available" > $home_trbot"ss.txt"
 			coolk=0
 		fi
-	else
-		coolk=0
-	fi
-
+	#else
+	#	coolk=0
+	#fi
 fi
 
 
