@@ -454,7 +454,7 @@ parce4 ()
 {
 logger " "
 logger "parce4 start"
-fetchmail -v -f /home/en/fetchmail/fetchmail.conf
+cd /home/en/fetchmail/mail/new/; fetchmail -v -f /home/en/fetchmail/fetchmail.conf
 #su en -c 'cd /home/en/fetchmail/mail/new/; fetchmail -v -f /home/en/fetchmail/fetchmail.conf' -s /bin/bash
 grep "Subject: " /home/en/fetchmail/mail/new/* > $home_trbot"int2.txt"
 
