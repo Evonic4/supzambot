@@ -1,11 +1,13 @@
 # supzambot
 support zammad bot  
   
-1. install from root:  
-cd /usr/share && git clone https://github.com/Evonic4/supzambot.git && mv ./supzambot ./trbot2 && cd ./trbot2 && chmod +rx /usr/share/trbot2/setup.sh && /usr/share/trbot2/setup.sh  
+1. docker: docker push evonic/supzambot  
   
 2. configure settings.conf  
   
+chmod 700 /home/en/fetchmail/fetchmail.conf;  
+chmod 700 /home/en/fetchmail/procmail.conf;  
+
 3. configure zammad 
   add trigger zammad:
 1  
@@ -22,14 +24,6 @@ cd /usr/share && git clone https://github.com/Evonic4/supzambot.git && mv ./supz
 ![image](https://user-images.githubusercontent.com/46780974/193843777-9413fb3b-81cf-499f-86cf-0ba8febf3630.png)
   
   
-4. nano crontab -e  
-@reboot sleep 60 && rm -f /usr/share/trbot2/rtb_pid.txt && su mastmetric -c '/usr/share/trbot2/trbot.sh' -s /bin/bash &  
+4. start docker  
   
-5. start:  
-rm -f /usr/share/trbot2/rtb_pid.txt && su mastmetric -c '/usr/share/trbot2/trbot.sh' -s /bin/bash &  
-  
-  
-dependencies: wget git tar curl bc jq perl  
-  
-  docker: docker push evonic/supzambot  
   
