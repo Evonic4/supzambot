@@ -523,7 +523,7 @@ else
 	n_mode=0
 fi
 logger "tmode="$tmode", nade="$nade", n_mode="$n_mode
-[ "$n_mode" -eq "0" ] && [ -f $home_trbot"n_buf.txt" ] && prelibomb $home_trbot"zammad.txt" $home_trbot"n_buf.txt" $home_trbot"zammad3.txt" && otv=$ftb"zammad.txt" && send && rm -f $home_trbot"n_buf.txt" && echo "" > /home/en/fetchmail/procmail.log
+[ "$n_mode" -eq "0" ] && [ -f $home_trbot"n_buf.txt" ] && prelibomb $home_trbot"zammad.txt" $home_trbot"n_buf.txt" $home_trbot"zammad3.txt" && otv=$ftb"zammad.txt" && send && rm -f $home_trbot"n_buf.txt" && echo "" > /home/en/fetchmail/log/procmail.log
 [ "$pochto" -eq "0" ] && parce3;
 [ "$pochto" -eq "0" ] && auth_stat;
 [ "$pochto" -eq "1" ] && parce4;
