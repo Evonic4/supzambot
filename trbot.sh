@@ -13,7 +13,7 @@ function Init2()
 logger "init2 start"
 #load conf
 token=$(sed -n 1"p" $ftb"settings.conf" | tr -d '\r')
-log=$(sed -n 2"p" $ftb"settings.conf" | tr -d '\r')
+#log=$(sed -n 2"p" $ftb"settings.conf" | tr -d '\r')
 lid=$(sed -n 3"p" $ftb"settings.conf" | tr -d '\r')
 echo $lid > $ftb"lastid.txt"
 fPID=$(sed -n 4"p" $ftb"settings.conf" | tr -d '\r')
@@ -40,6 +40,7 @@ ztich=$(sed -n 18"p" $ftb"settings.conf" | tr -d '\r')
 
 mdt_start=$(sed -n 19"p" $ftb"settings.conf" |sed 's/\://g'|sed 's/\-//g'|sed 's/ //g'| tr -d '\r')
 mdt_end=$(sed -n 20"p" $ftb"settings.conf" |sed 's/\://g'|sed 's/\-//g'|sed 's/ //g' | tr -d '\r')
+pochto=$(sed -n 21"p" $ftb"settings.conf" | tr -d '\r')
 
 logger "init2 stop"
 }
@@ -52,29 +53,24 @@ starten=1
 function logger()
 {
 local date1=`date '+ %Y-%m-%d %H:%M:%S'`
-echo $date1" supzambot: "$1 #>> $log
+echo $date1" supzambot: "$1
 }
 
 mkdir -p $ftb
 
-if ! [ -f $log ]; then
-echo " " > $log
-else
-echo " " >> $log
-fi
 
 
 
 
-ticket_status ()  	
+ticket_status ()
 {
 logger "start ticket_status"
 ttst=$(echo $text | awk '{print $2}' | tr -d '\r')
 logger "ticket_status ttst="$ttst
 
 curl -s -m 60 --netrc-file $home_trbot"cr.txt" $urlpoint/api/v1/tickets/search?query=number:$ttst | jq '.' > $home_trbot"zticket.txt" #'.assets.Ticket'
-[ "$loglevel" -gt "1" ] && logger "ticket_status superlog" && cat $home_trbot"zticket.txt" >> $log
-		
+[ "$loglevel" -gt "1" ] && logger "ticket_status superlog" && cat $home_trbot"zticket.txt"
+
 str_col2=$(grep -cv "^#" $home_trbot"zticket.txt")
 logger "ticket_status str_col2="$str_col2
 
@@ -190,7 +186,8 @@ $ftb"cucu2.sh" &
 pauseloop;
 
 if [ -f $ftb"out.txt" ]; then
-	logger "send1 superlog1" && cat $file >> $log
+	logger "send1 superlog1"
+	cat $file
 	
 	if [ "$(cat $ftb"out.txt" | grep ":true,")" ]; then
 		logger "send1 OK"
@@ -267,7 +264,7 @@ $ftb"cucu1.sh" &
 pauseloop;
 
 if [ -f $ftb"in.txt" ]; then
-	[ "$loglevel" -gt "1" ] && logger "input superlog" && cat $home_trbot"in.txt" >> $log
+	[ "$loglevel" -gt "1" ] && logger "input superlog" && cat $home_trbot"in.txt"
 
 	if [ "$(cat $ftb"in.txt" | grep ":true,")" ]; then
 		logger "input OK"
@@ -365,7 +362,7 @@ jobs_status ()
 {
 logger "jobs_status start"
 curl -s  -m 60 --netrc-file $home_trbot"cr.txt" $urlpoint/api/v1/tickets/search?query=9 | jq '.' | grep -A6 "group_id\"\: 6" | grep -A3 "state_id\"\: 2" | grep number | awk -F":" '{print $2}' | sed 's/\"/ /g' | sed 's/,/ /g' | sed 's/^[ \t]*//;s/[ \t]*$//' > $home_trbot"jobs.txt"
-[ "$loglevel" -gt "1" ] && logger "jobs_status superlog" && cat $home_trbot"jobs.txt" >> $log
+[ "$loglevel" -gt "1" ] && logger "jobs_status superlog" && cat $home_trbot"jobs.txt"
 
 str_co2=$(grep -cv "^#" $home_trbot"jobs.txt")
 logger "jobs_status str_co2="$str_co2
@@ -404,7 +401,7 @@ parce3 ()
 logger "parce3 start"
 curl -s  -m 60 --netrc-file $home_trbot"cr.txt" $urlpoint/api/v1/tickets/search?query=9 | jq '.' | grep -A6 "group_id\"\: 6" | grep -A3 "state_id\"\: 2" | grep number | awk -F":" '{print $2}' | sed 's/\"/ /g' | sed 's/,/ /g' | sed 's/^[ \t]*//;s/[ \t]*$//' > $home_trbot"int2.txt"
 #curl -s --netrc-file $home_trbot"cr.txt" $urlpoint/api/v1/tickets/search?query=9 | jq '.' | grep -A6 "group_id\"\: 6" | grep -A3 "state_id\"\: 1" | grep number | awk -F":" '{print $2}' | sed 's/\"/ /g' | sed 's/,/ /g' | sed 's/^[ \t]*//;s/[ \t]*$//' > $home_trbot"int1.txt"
-logger "parce3 superlog1" && cat $home_trbot"int2.txt" >> $log
+logger "parce3 superlog1" && cat $home_trbot"int2.txt"
 
 str_co2=$(grep -cv "^#" $home_trbot"int2.txt")
 #str_col=$(grep -cv "^#" $home_trbot"int1.txt")
@@ -423,8 +420,6 @@ if [ "$str_co2" -gt "0" ]; then
 				echo $test >> $home_trbot"zammad.txt"
 				curl -s --netrc-file $home_trbot"cr.txt" $urlpoint/api/v1/tickets/search?query=number:$test | jq '.assets.Ticket' | grep title | sed 's/: /TQ4534534/g' | awk -F"TQ4534534" '{print $2}' | sed 's/\"/ /g' | sed 's/\,/ /g' | sed 's/^[ \t]*//;s/[ \t]*$//' > $home_trbot"tmp1.txt"
 				echo "$(cat $home_trbot"tmp1.txt")" >> $home_trbot"zammad.txt"
-				idid=`curl -s --netrc-file $home_trbot"cr.txt" $urlpoint/api/v1/tickets/search?query=number:$test | jq '.assets.Ticket' | grep "\"id\": " | sed 's/: /TQ4534534/g' | awk -F"TQ4534534" '{print $2}' | sed 's/\"/ /g' | sed 's/\,/ /g' | sed 's/^[ \t]*//;s/[ \t]*$//'`
-				echo "https://support.mixvel.com/#ticket/zoom/"$idid >> $home_trbot"zammad.txt"
 				echo "----" >> $home_trbot"zammad.txt"
 				#numtick=$(sed -n 1"p" $home_trbot"tick.txt" | tr -d '\r')
 				#[ "$test" -gt "numtick" ] && echo $test > $home_trbot"tick.txt"
@@ -455,7 +450,39 @@ fi
 logger "parce3 stop"
 }
 
+parce4 ()
+{
+logger " "
+logger "parce4 start"
+su en -c 'cd /home/en/fetchmail/mail/new/; fetchmail -v -f /home/en/fetchmail/fetchmail.conf' -s /bin/bash
+grep "Subject: " /home/en/fetchmail/mail/new/* > $home_trbot"int2.txt"
 
+str_co4=$(grep -cv "^#" $home_trbot"int2.txt")
+logger "parce4 str_co4="$str_co4
+if [ "$str_co4" -gt "0" ]; then
+	for (( i=1;i<=$str_co4;i++)); do
+	url=$(sed -n $i"p" $home_trbot"int2.txt" | awk '{print $2}' | tr -d '\r')
+	numtick=$(sed -n $i"p" $home_trbot"int2.txt" | awk '{print $3}' | tr -d '\r')
+	tematick=$(curl -s --netrc-file $home_trbot"cr.txt" $urlpoint/api/v1/tickets/search?query=number:$numtick | jq '.assets.Ticket' | grep title | sed 's/: /TQ4534534/g' | awk -F"TQ4534534" '{print $2}' | sed 's/\"/ /g' | sed 's/\,/ /g' | sed 's/^[ \t]*//;s/[ \t]*$//')
+	logger "parce4 url="$url" numtick="$numtick" tematick="$tematick
+	if [ "$n_mode" -eq "1" ]; then
+		logger "parce4 n_mode ON, "$numtick" in n_buf.txt"
+		echo $numtick >> $home_trbot"n_buf.txt"
+	else
+		logger "parce4 n_mode OFF"
+		cp -f $home_trbot"zammad1.txt" $home_trbot"zammad.txt"
+		echo $numtick >> $home_trbot"zammad.txt"
+		echo $tematick >> $home_trbot"zammad.txt"
+		echo $url >> $home_trbot"zammad.txt"
+		echo "----" >> $home_trbot"zammad.txt"
+		logger "parce4 send"; otv=$ftb"zammad.txt"; send;
+	fi
+	done
+else
+	logger "parce4 no data";
+fi
+mv -f mv /home/en/fetchmail/mail/new/* /home/en/fetchmail/mail/cur/
+}
 
 
 
@@ -471,7 +498,7 @@ echo $PID > $fPID
 
 logger " "
 logger "start bot, loglevel="$loglevel", chat_id1="$chat_id1", chat_id_tech="$chat_id_tech
-starten_furer;
+#starten_furer;
 otv=$home_trbot"start.txt"; send;
 
 
@@ -481,10 +508,8 @@ sleep $sec4
 
 if [ "$tmode" -gt "0" ]; then
 	if [ "$nade" -eq "0" ]; then
-		date1=`date '+ %H:%M:%S'`
-		logger " "
-		mdt1=$(echo "$date1"|sed 's/\://g'|sed 's/\-//g'|sed 's/ //g')
-		logger "mdt1="$mdt1
+		mdt1=$(date '+%H%M%S')
+		logger "mdt1="$mdt1" mdt_start="$mdt_start" mdt_end="$mdt_end
 		#mdt_start="000000"
 		#mdt_end="090000"
 		if [ "$mdt1" \> "$mdt_start" ] && [ "$mdt1" \< "$mdt_end" ]; then
@@ -497,22 +522,23 @@ else
 	n_mode=0
 fi
 logger "tmode="$tmode", nade="$nade", n_mode="$n_mode
-[ "$n_mode" -eq "0" ] && [ -f $home_trbot"n_buf.txt" ] && prelibomb $home_trbot"zammad.txt" $home_trbot"n_buf.txt" $home_trbot"zammad3.txt" && otv=$ftb"zammad.txt" && send && rm -f $home_trbot"n_buf.txt"
-parce3;
-auth_stat;
+[ "$n_mode" -eq "0" ] && [ -f $home_trbot"n_buf.txt" ] && prelibomb $home_trbot"zammad.txt" $home_trbot"n_buf.txt" $home_trbot"zammad3.txt" && otv=$ftb"zammad.txt" && send && rm -f $home_trbot"n_buf.txt" && echo "" > /home/en/fetchmail/procmail.log
+[ "$pochto" -eq "0" ] && parce3;
+[ "$pochto" -eq "0" ] && auth_stat;
+[ "$pochto" -eq "1" ] && parce4;
 
-if ! [ -f $f_send ]; then		#НЕ файл с оповещением
-	chat_id1=$(sed -n 9"p" $ftb"settings.conf" | sed 's/z/-/g' | tr -d '\r')
-	input;
-	parce;
-else 
-	chat_id1=$(sed -n 9"p" $ftb"settings.conf" | sed 's/z/-/g' | tr -d '\r')
-	otv=$f_send
-	logger "OPOVEST! chat_id="$chat_id2", otv="$otv
-	send;
-	rm -f $f_send
-	#exit 0
-fi
+#if ! [ -f $f_send ]; then		#НЕ файл с оповещением
+#	chat_id1=$(sed -n 9"p" $ftb"settings.conf" | sed 's/z/-/g' | tr -d '\r')
+#	input;
+#	parce;
+#else 
+#	chat_id1=$(sed -n 9"p" $ftb"settings.conf" | sed 's/z/-/g' | tr -d '\r')
+#	otv=$f_send
+#	logger "OPOVEST! chat_id="$chat_id2", otv="$otv
+#	send;
+#	rm -f $f_send
+#	#exit 0
+#fi
 
 #kkik=$(($kkik+1))
 #[ "$kkik" -eq "$progons" ] && Init2
