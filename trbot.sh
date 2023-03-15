@@ -176,6 +176,7 @@ send1 ()
 {
 
 logger "send1 start"
+sleep 1
 
 echo $chat_id1 > $ftb"send.txt"
 echo $otv >> $ftb"send.txt"
@@ -193,7 +194,7 @@ if [ -f $ftb"out.txt" ]; then
 		logger "send1 OK"
 	else
 		logger "send1 file+, timeout.."
-		sleep 2
+		sleep 1
 	fi
 else
 	logger "send1 FAIL"
